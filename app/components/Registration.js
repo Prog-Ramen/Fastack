@@ -1,58 +1,102 @@
 import React from 'react';
-import octokit from '@octokit/rest';
+const octokit = require('@octokit/rest')
+console.log(octokit)
+import stylesheet from '../stylesheets/RegistrationStyle.js';
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    TouchableOpacity,
+    View,
+    StyleSheet,
+    Text
 } from 'react-native'
+import t from 'tcomb-form-native';
+var LABEL_COLOR = "#000000";
+var INPUT_COLOR = "#ffffff";
+var ERROR_COLOR = "#a94442";
+var HELP_COLOR = "#999999";
+var BORDER_COLOR = "#cccccc";
+var DISABLED_COLOR = "#777777";
+var DISABLED_BACKGROUND_COLOR = "#eeeeee";
+var FONT_SIZE = 17;
+var FONT_WEIGHT = "500";
+
+const Form = t.form.Form;
+
+const User = t.struct({
+    email: t.String,
+    password: t.String
+});
+
+const options = {
+  fields: {
+      email: {
+          error: 'You require a github email adress to continue.',
+          placeholder: 'Email',
+          placeholderTextColor: INPUT_COLOR
+      },
+      password: {
+          error: 'You require a github password to continue.',
+          placeholder: 'Password',
+          placeholderTextColor: INPUT_COLOR
+      }
+  },
+  stylesheet: stylesheet,
+};
 
 export default class Registration extends React.Component {
+  fetchProjects() {
+      octokit.repos.getForUser({username: 'gilmoregrills', type: 'owner', sort: 'pushed'})
+          .then(result => {
+              console.log(result.data)
+              this.setState({projects: result.data})
+          })
+  }
+  _handleSubmit = () => {
+      const value = this._form.getValue();
+      console.log('value: ', value['email']);
+      this.fetchProjects()
+  };
   render() {
     return (
       <View style={styles.regForm}>
-        <Text style={styles.header}> Login </Text>
-        <TextInput style={styles.textinput} placeholder="Github Username" placeholderTextColor="#fff" underlineColorAndroid={'transparent'} />
-        <TextInput style={styles.textinput} placeholder="Github Password" placeholderTextColor="#fff" underlineColorAndroid={'transparent'} secureTextEntry={true} />
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.btntext}>Login</Text>
-        </TouchableOpacity>
+          <Text style={styles.appName}>  FaStack  </Text>
+          <Text style={styles.header}> Login with Github </Text>
+          <Form type={User} options={options} ref={c => this._form = c} />
+          <TouchableOpacity style={styles.button} onPress={this._handleSubmit}>
+              <Text style={styles.btntext}>Login</Text>
+          </TouchableOpacity>
       </View>
-    )
+    );
   }
 }
 
-const styles = StyleSheet.create({
+var styles = StyleSheet.create({
   regForm: {
     alignSelf: 'stretch',
+  },
+  appName: {
+      alignSelf: 'center',
+      fontSize: 48,
+      color: '#fff',
+      paddingBottom: 10,
+      marginBottom: 40
   },
   header: {
     fontSize: 24,
     color: '#fff',
     paddingBottom: 10,
     marginBottom: 40,
-    borderBottomColor: '#199187',
-    borderBottomWidth: 1,
-  },
-  textinput: {
-    alignSelf: 'stretch',
-    height: 40,
-    marginBottom: 30,
-    color: '#fff',
-    borderBottomColor: '#f8f8f8',
+    borderBottomColor: '#fff',
     borderBottomWidth: 1,
   },
   button: {
     alignSelf: 'stretch',
-    alignItems: 'center',
     padding: 20,
-    backgroundColor: '#59cbbd',
-    marginTop: 30,
+    backgroundColor: "#59cbbd",
+    marginTop: 30
   },
   btntext: {
+    alignSelf: 'center',
     color: '#fff',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   }
-})
-
+});
