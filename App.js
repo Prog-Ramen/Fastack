@@ -6,18 +6,48 @@ import {
   TouchableOpacity,
   View
 } from 'react-native'
+import Login from './app/components/Login.js';
+import Stack from './app/components/Stack.js';
 
-import Registration from './app/components/Registration.js';
 
+import {
+    StackNavigator,
+} from 'react-navigation';
+
+const Navigator = StackNavigator({
+    Login: {
+        screen: Login
+    },
+    Stack: {
+        screen: Stack
+    }}, {
+    headerMode: 'none',
+    cardStyle: {
+        backgroundColor: 'transparent'
+    },
+    transitionConfig: () => ({
+        containerStyle: {
+            backgroundColor: 'transparent',
+        }
+    }),
+});
 export default class App extends React.Component {
+  static navigationOptions = {
+      header: null,
+      title: 'Welcome',
+  };
   render() {
     return (
       <View style={styles.container}>
-        <Registration />
+        <Navigator />
       </View>
     )
   }
 }
+
+
+
+
 
 
 const styles = StyleSheet.create({

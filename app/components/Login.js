@@ -1,13 +1,17 @@
 import React from 'react';
-const octokit = require('@octokit/rest')
-console.log(octokit)
-import stylesheet from '../stylesheets/RegistrationStyle.js';
+import stylesheet from '../stylesheets/LoginStyle.js';
+import {login} from './githubLogin';
+import App from '../../App.js';
+import Stack from './Stack.js';
+
 import {
     TouchableOpacity,
     View,
     StyleSheet,
     Text
 } from 'react-native'
+
+
 import t from 'tcomb-form-native';
 var LABEL_COLOR = "#000000";
 var INPUT_COLOR = "#ffffff";
@@ -18,9 +22,10 @@ var DISABLED_COLOR = "#777777";
 var DISABLED_BACKGROUND_COLOR = "#eeeeee";
 var FONT_SIZE = 17;
 var FONT_WEIGHT = "500";
+var TOKEN = "";
+
 
 const Form = t.form.Form;
-
 const User = t.struct({
     email: t.String,
     password: t.String
@@ -42,18 +47,21 @@ const options = {
   stylesheet: stylesheet,
 };
 
-export default class Registration extends React.Component {
-  fetchProjects() {
-      octokit.repos.getForUser({username: 'gilmoregrills', type: 'owner', sort: 'pushed'})
-          .then(result => {
-              console.log(result.data)
-              this.setState({projects: result.data})
-          })
-  }
+export default class Login extends React.Component {
+  state = {
+    login: false,
+  };
   _handleSubmit = () => {
       const value = this._form.getValue();
-      console.log('value: ', value['email']);
-      this.fetchProjects()
+      console.log('email: ', value['email']);
+      console.log('password: ', value['password']);
+      this.props.navigation.navigate('Stack');
+
+      // login(value['email'], value['password']).then((token) => {
+      //     TOKEN = token;
+      //     console.log(TOKEN);
+      //     this.setState({ login: true });
+      // });
   };
   render() {
     return (
@@ -72,6 +80,7 @@ export default class Registration extends React.Component {
 var styles = StyleSheet.create({
   regForm: {
     alignSelf: 'stretch',
+    marginTop: 100
   },
   appName: {
       alignSelf: 'center',

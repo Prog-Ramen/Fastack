@@ -1,0 +1,7 @@
+.e/
+.expo/
+.idea/
+android/
+ios/
+node_modules/
+package-lock.json
